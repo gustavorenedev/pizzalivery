@@ -7,6 +7,7 @@ interface LayoutProps {
 }
 
 export const Layout = ({ children }: LayoutProps) => {
+  // guarda o header e o footer
   return (
     <>
       <Header />
