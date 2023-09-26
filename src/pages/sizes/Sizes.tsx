@@ -1,8 +1,14 @@
-import { Layout } from "../../components/layout/Layout";
-import { Button } from "../../components/button/Button";
-import { useState, useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../../routes";
+import { Button } from "../../components/button/Button";
+import { Layout } from "../../components/layout/Layout";
+import { Title } from "../../components/title/Title";
+import {
+  RadioCard,
+  SizeActionWrapper,
+  SizeContentWrapper,
+} from "./Sizes.style";
 import OrderContext from "../../context/OrderContext";
 
 export default function Sizes() {
@@ -11,56 +17,56 @@ export default function Sizes() {
 
   const sizeOptions = [
     {
-      id: "1",
+      id: "10",
       flavours: 1,
       size: 35,
       slices: 8,
       text: "Grande",
     },
     {
-      id: "2",
+      id: "11",
       flavours: 2,
       size: 35,
       slices: 8,
       text: "Grande",
     },
     {
-      id: "3",
+      id: "20",
       flavours: 1,
       size: 28,
       slices: 4,
       text: "Média",
     },
     {
-      id: "4",
+      id: "21",
       flavours: 2,
       size: 28,
       slices: 4,
       text: "Média",
     },
     {
-      id: "5",
+      id: "30",
       flavours: 1,
       size: 18,
       slices: 1,
       text: "Broto",
     },
     {
-      id: "6",
+      id: "31",
       flavours: 2,
       size: 18,
       slices: 1,
       text: "Broto",
     },
-  ]
+  ];
 
   const [sizeId, setSizeId] = useState("");
 
-  const getPizzaSize = (sizeId: string) => {
-    return sizeOptions.filter((option) => option.id === sizeId)
-  }
+  const getPizzaSize = (id: string) => {
+    return sizeOptions.filter((option) => option.id === id);
+  };
 
-  const handleChange = (event) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSizeId(event.target.value);
   };
 
@@ -69,23 +75,23 @@ export default function Sizes() {
   };
 
   const handleNext = () => {
-    const selectedSize = getPizzaSize(sizeId)
-    setPizzaSize(selectedSize)
+    const selectedSize = getPizzaSize(sizeId);
+    setPizzaSize(selectedSize);
     navigate(routes.pizzaFlavour);
   };
 
   useEffect(() => {
-    if(!pizzaSize) return
+    if (!pizzaSize) return;
 
-    setSizeId(pizzaSize[0].id)
-  }, [])
+    setSizeId(pizzaSize[0].id);
+  }, []);
 
   return (
     <Layout>
-      <h1 tabIndex={0}>Escolha o tamanho da sua pizza</h1>
-      <section>
+      <Title tabIndex={0}>Escolha o tamanho da sua pizza</Title>
+      <SizeContentWrapper>
         {sizeOptions.map(({ id, size, slices, flavours, text }) => (
-          <section key={id}>
+          <RadioCard key={id}>
             <input
               type="radio"
               id={id}
@@ -94,20 +100,21 @@ export default function Sizes() {
               value={id}
               checked={sizeId === id}
             />
-            <label htmlFor={id}>{text} - {flavours} sabores 
+            <label htmlFor={id}>
+              {text} - {flavours} sabores
               <span>
                 Pizza com {slices} pedaços e {size}cm
               </span>
             </label>
-          </section>
+          </RadioCard>
         ))}
-      </section>
-      <div>
+      </SizeContentWrapper>
+      <SizeActionWrapper>
         <Button inverse="inverse" onClick={handleBack}>
           Voltar
         </Button>
-        <Button onClick={handleNext}>Eescolha o sabor</Button>
-      </div>
+        <Button onClick={handleNext}>Escolha o sabor</Button>
+      </SizeActionWrapper>
     </Layout>
   );
 }
