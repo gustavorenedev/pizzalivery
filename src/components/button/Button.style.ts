@@ -1,6 +1,6 @@
-import styled from "styled-components"
-import { colors } from "../../styles/Colors"
-import { sizes } from "../../styles/Sizes"
+import styled from "styled-components";
+import { colors } from "../../styles/Colors";
+import { sizes } from "../../styles/Sizes";
 
 export const ElementButton = styled.button`
   border: 0;
@@ -33,4 +33,11 @@ export const ElementButton = styled.button`
     background-color: transparent;
     color: ${colors.primary.main};
   }
-`
+
+  &:disabled {
+    border-color: ${colors.text.dark};
+    background-color: transparent;
+    color: ${colors.text.dark};
+    cursor: not-allowed;
+  }
+`;
