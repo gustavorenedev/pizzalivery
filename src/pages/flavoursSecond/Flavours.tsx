@@ -94,11 +94,7 @@ export default function Flavours() {
   const handleNext = () => {
     const selectedFlavour = getPizzaFlavour(flavourId);
     setPizzaFlavour(selectedFlavour);
-    if (pizzaSize[0].flavours === 2) {
-      navigate(routes.secondPizzaFlavour)
-    } else {
-      navigate(routes.summary);
-    }
+    navigate(routes.summary);
   };
 
   useEffect(() => {
@@ -133,7 +129,7 @@ export default function Flavours() {
         <Button inverse="inverse" onClick={handleBack}>
           Voltar
         </Button>
-        <Button onClick={handleNext}>{pizzaSize[0].flavours === 2 ? "Escolha o segundo sabor" : "Ir para o resumo"}</Button>
+        <Button onClick={handleNext}>Ir para o resumo</Button>
       </FlavourActionWrapper>
     </Layout>
   );
