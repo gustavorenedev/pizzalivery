@@ -1,8 +1,17 @@
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/button/Button";
 import { Layout } from "../../components/layout/Layout";
-import OrderContext from "../../context/OrderContext";
-import { useState, useContext, useEffect } from "react";
+import { routes } from "../../routes";
+import OrderContext, { PizzaFlavourType } from "../../context/OrderContext";
+
+import Mussarela from "../../assets/pizza-flavours/mucarela.png";
+import ChickenWithCheese from "../../assets/pizza-flavours/frango-catupiry.png";
+import Margherita from "../../assets/pizza-flavours/margherita.png";
+import Lusa from "../../assets/pizza-flavours/portuguesa.png";
+
+import { convertToCurrency } from "../../helpers/convertToCurrency";
+
 import {
   FlavourActionWrapper,
   FlavourCard,
@@ -12,21 +21,12 @@ import {
   FlavourCardTitle,
   FlavourContentWrapper,
 } from "./Flavour.styles";
-
-import Mussarela from "../../assets/pizza-flavours/mucarela.png";
-import ChickenWithCheese from "../../assets/pizza-flavours/frango-catupiry.png";
-import Margherita from "../../assets/pizza-flavours/margherita.png";
-import Lusa from "../../assets/pizza-flavours/portuguesa.png";
-import { convertToCurrency } from "../../helpers/convertToCurrency";
-import { routes } from "../../routes";
 import { Title } from "../../components/title/Title";
 
 export default function Flavours() {
   const navigate = useNavigate();
-
-  const { pizzaSize, pizzaFlavour, setPizzaFlavour } = useContext(OrderContext);
-
-  const [flavourId, setFlavourId] = useState("");
+  const { pizzaSize, setPizzaFlavour, choosePizza } = useContext(OrderContext);
+  const [flavourId, setflavourId] = useState<string[]>([]);
 
   const flavoursOptions = [
     {
@@ -80,11 +80,29 @@ export default function Flavours() {
   ];
 
   const getPizzaFlavour = (id: string) => {
-    return flavoursOptions.filter((flavour) => flavour.id === id);
+    return flavoursOptions.find((flavour) => flavour.id === id);
   };
 
-  const handleClick = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFlavourId(event.target.id);
+  const handleClick = (selectedFlavour: string) => {
+    if (pizzaSize[0].flavours === 2) {
+      setflavourId((prevState) => {
+        const alreadySelected = prevState.includes(selectedFlavour);
+
+        if (alreadySelected) {
+          return prevState.filter((item) => item !== selectedFlavour);
+        }
+
+        if (prevState.length === 2) {
+          return prevState;
+        }
+
+        return [...prevState, selectedFlavour];
+      });
+
+      return;
+    }
+
+    setflavourId([selectedFlavour]);
   };
 
   const handleBack = () => {
@@ -92,48 +110,55 @@ export default function Flavours() {
   };
 
   const handleNext = () => {
-    const selectedFlavour = getPizzaFlavour(flavourId);
-    setPizzaFlavour(selectedFlavour);
-    if (pizzaSize[0].flavours === 2) {
-      navigate(routes.secondPizzaFlavour)
-    } else {
-      navigate(routes.summary);
-    }
+    const selectedFlavours: PizzaFlavourType[] = [];
+
+    flavourId.forEach((item) => {
+      const flavour = getPizzaFlavour(item);
+      if (flavour) selectedFlavours.push(flavour);
+    });
+
+    choosePizza({
+      size: pizzaSize[0],
+      flavours: selectedFlavours,
+    });
+
+    setPizzaFlavour(selectedFlavours);
+    navigate(routes.summary);
   };
 
   useEffect(() => {
-    if (!pizzaFlavour) return;
-
-    setFlavourId(pizzaFlavour[0].id);
+    if (pizzaSize[0].flavours === 2) {
+      document.getElementsByClassName("title_sabores")[0].innerHTML =
+        "Agora escolha os dois sabor da sua pizza";
+    }
   }, []);
 
   return (
     <Layout>
-      <Title tabIndex={0}>Agora escolha o sabor da sua pizza</Title>
+      <Title tabIndex={0} className="title_sabores">
+        Agora escolha o sabor da sua pizza
+      </Title>
       <FlavourContentWrapper>
-        {flavoursOptions.map(({ id, image, name, description, price }) => (
-          <FlavourCard key={id} selected={id === flavourId ? true : false}>
-            <FlavourCardImage src={image} alt={name} width="200px" />
-            <FlavourCardTitle>{name}</FlavourCardTitle>
-            <FlavourCardDescription>{description}</FlavourCardDescription>
-            <FlavourCardPrice>
-              {convertToCurrency(price[pizzaSize[0].slices])}
-            </FlavourCardPrice>
-            <Button
-              id={id}
-              onClick={handleClick}
-              className={id === flavourId ? "selected" : ""}
-            >
-              Selecionar
-            </Button>
-          </FlavourCard>
-        ))}
+        {flavoursOptions.map(({ id, image, name, description, price }) => {
+          return (
+            <FlavourCard key={id} selected={flavourId.includes(id)}>
+              <FlavourCardImage src={image} alt={name} />
+              <FlavourCardTitle>{name}</FlavourCardTitle>
+              <FlavourCardDescription>{description}</FlavourCardDescription>
+              <FlavourCardPrice>
+                {convertToCurrency(price[pizzaSize[0]?.slices])}
+              </FlavourCardPrice>
+              <Button onClick={() => handleClick(id)}>Selecionar</Button>
+            </FlavourCard>
+          );
+        })}
       </FlavourContentWrapper>
+
       <FlavourActionWrapper>
         <Button inverse="inverse" onClick={handleBack}>
           Voltar
         </Button>
-        <Button onClick={handleNext}>{pizzaSize[0].flavours === 2 ? "Escolha o segundo sabor" : "Ir para o resumo"}</Button>
+        <Button onClick={handleNext}>Escolha o sabor</Button>
       </FlavourActionWrapper>
     </Layout>
   );

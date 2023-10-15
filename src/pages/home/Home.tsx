@@ -7,15 +7,16 @@ import { routes } from "../../routes";
 export default function Home() {
   const navigate = useNavigate();
 
-  const handleClick = () => {
+  const handleStartOrder = () => {
     navigate(routes.pizzaSize);
   };
 
   return (
     <Layout>
       <HomeWrapper>
-        <Button onClick={handleClick}>Iniciar pedido</Button>
+        <Button onClick={handleStartOrder}>Iniciar pedido</Button>
       </HomeWrapper>
     </Layout>
   );
 }
+

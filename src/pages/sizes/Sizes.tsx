@@ -59,7 +59,6 @@ export default function Sizes() {
       text: "Broto",
     },
   ];
-
   const [sizeId, setSizeId] = useState("");
 
   const getPizzaSize = (id: string) => {
@@ -81,9 +80,9 @@ export default function Sizes() {
   };
 
   useEffect(() => {
-    if (!pizzaSize) return;
+    if (pizzaSize.length < 1) return;
 
-    setSizeId(pizzaSize[0].id);
+    setSizeId(pizzaSize[0]?.id);
   }, []);
 
   return (
