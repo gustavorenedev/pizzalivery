@@ -7,6 +7,7 @@ import Checkout from "./pages/checkout/Checkout";
 import Login from "./pages/login/Login";
 import { routes } from "./routes";
 import PrivateRoutes from "./components/privateRoutes/privateRoutes";
+import CheckoutSecond from "./pages/checkoutSecond/CheckoutSecond";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path={routes.summary} element={<Summary />} />
         <Route element={<PrivateRoutes />}>
           <Route path={routes.checkout} element={<Checkout />} />
+          <Route path={routes.checkoutSecond} element={<CheckoutSecond />} />
         </Route>
         <Route path={routes.login} element={<Login />} />
       </Routes>

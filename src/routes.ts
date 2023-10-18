@@ -4,5 +4,6 @@ export const routes = {
   pizzaFlavour: "/pedido/escolha-o-sabor",
   summary: "/pedido/resumo",
   checkout: "/checkout",
+  checkoutSecond: "/checkout-second",
   login: "/login",
 };

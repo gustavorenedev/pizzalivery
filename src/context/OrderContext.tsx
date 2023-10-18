@@ -61,6 +61,7 @@ const OrderContextProvider = ({ children }) => {
   const [pizzaSize, setPizzaSize] = useState<PizzaSizeType[]>([]);
   const [pizzaFlavour, setPizzaFlavour] = useState<PizzaFlavourType[]>([]);
   const [chosenPizzas, setChosenPizzas] = useState<Pizza[]>([]);
+  const [newOrder, setNewOrder] = useState();
 
   const [pizzaOrder, setPizzaOrder] = useState({});
 
@@ -79,6 +80,8 @@ const OrderContextProvider = ({ children }) => {
         choosePizza,
         pizzaOrder,
         setPizzaOrder,
+        newOrder,
+        setNewOrder,
       }}
     >
       {children}

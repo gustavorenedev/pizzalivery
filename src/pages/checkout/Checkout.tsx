@@ -14,23 +14,29 @@ import {
 } from "./Checkout.style";
 
 export default function Checkout() {
-  const { pizzaOrder } = useContext(OrderContext);
+  const { pizzaOrder, setNewOrder } = useContext(OrderContext);
 
   const navigate = useNavigate();
-
-  const paymentOptions = [
-    { id: "20", value: 1, text: "Cartão de crédito" },
-    { id: "21", value: 2, text: "Cartão de débito" },
-    { id: "22", value: 3, text: "Vale refeição" },
-    { id: "23", value: 4, text: "PIX" },
-  ];
-
+  const [paymentOptions, setPaymentOptions] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [paymentType, setPaymentType] = useState("");
-  // const [isDisabled, setIsDisabled] = useState(true)
 
   const handleChange = (event) => {
     setPaymentType(event.target.value);
     // setIsDisabled(false)
+  };
+
+  const getPaymentOptions = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch("http://localhost:8000/payment/options");
+      const options = await response.json();
+      setPaymentOptions(options);
+    } catch (error) {
+      alert(`Deu ruim: ${error}`);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const getPaymentOptiontype = (paymentType: number) => {
@@ -43,8 +49,24 @@ export default function Checkout() {
     return filteredValue[0].text;
   };
 
+  const createOrder = async (orderPayload) => {
+    try {
+      const response = await fetch("http://localhost:8000/order/create_order", {
+        method: "POST",
+        body: JSON.stringify(orderPayload),
+      });
+      const order = await response.json();
+      setNewOrder(order);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      console.log("Finally");
+      navigate(routes.checkoutSecond);
+    }
+  };
+
   const handleClick = () => {
-    alert("Pedido feito");
+    createOrder(pizzaOrder);
   };
 
   useEffect(() => {
@@ -54,6 +76,10 @@ export default function Checkout() {
   }, []);
 
   // ?. nullish
+
+  useEffect(() => {
+    getPaymentOptions();
+  }, []);
 
   return (
     <Layout>
